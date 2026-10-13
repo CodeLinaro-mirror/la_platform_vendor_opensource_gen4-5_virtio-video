@@ -45,7 +45,8 @@ static int virtio_video_v4l2_to_hab(struct virtio_video_device* vvd,
 		ret = virtio_video_queue_cmd_buffer(vvd, vbuf);
 
 	if (ret) {
-		virtio_video_state_update(stream, STREAM_STATE_ERROR);
+		if (!(sync && vbuf->resp_rc == VIRTIO_VIDEO_RESP_ERR_OUT_OF_MEMORY))
+			virtio_video_state_update(stream, STREAM_STATE_ERROR);
 		vpr_e(strm2tag(stream), "%s: %s cmd failed. %s-%s ret %d",
 		      __func__, sync ? "sync" : "async",
 		      cmd_to_string(cmd_type),
